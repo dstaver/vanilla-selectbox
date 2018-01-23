@@ -1,17 +1,17 @@
-import { state } from './state';
+import adloader from './index';
 
 const debug = require('debug');
 
-export async function subscribe(eventName, callback) {
-  const log = debug(`adloader:${eventName}`);
+export default async function subscribe(eventName, callback) {
+  const log = debug(`adloader:event:${eventName}`);
   log('Add subscriber');
 
   // Register the event if it doesn't already exist
-  if (!Array.isArray(state.eventListeners[eventName])) {
+  if (!Array.isArray(adloader.eventListeners[eventName])) {
     log('Register new event name');
-    state.eventListeners[eventName] = [];
+    adloader.eventListeners[eventName] = [];
   }
-  const listeners = state.eventListeners[eventName];
+  const listeners = adloader.eventListeners[eventName];
   listeners.push(callback);
 
   // Return a callback to remove the listener

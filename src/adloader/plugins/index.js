@@ -1,14 +1,12 @@
-import adloader from '../';
-import { state } from '../state';
+import adloader from '../index';
 import { setReadyCondition } from '../ready';
 
 const debug = require('debug');
 
 export async function registerPlugins() {
   const log = debug('adloader:registerPlugins');
-  log(`Register ${state.plugins.length} plugins`);
-  await setReadyCondition('pluginsReady', false);
-  state.plugins.forEach(async plugin => {
+  log(`Register ${adloader.plugins.length} plugins`);
+  adloader.plugins.forEach(async plugin => {
     const status = await plugin(adloader);
     log(status);
   });

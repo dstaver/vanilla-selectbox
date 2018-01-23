@@ -2,53 +2,96 @@
  * @module adloader
  */
 import * as gpt from './gpt';
+import subscribe from './subscribe';
+import dispatch from './dispatch';
 import { createAds } from './ad';
-import { state } from './state';
-import { subscribe } from './subscribe';
-import { dispatch } from './dispatch';
 import { setReadyCondition } from './ready';
 import { registerPlugins } from './plugins';
+import { isBetween, validateConfig } from './validators';
 
-const R = require('rambda');
 const debug = require('debug');
 
+const privateState = {
+  labelHeight: 11,
+};
+
 const adloader = {
-  state,
   subscribe,
   dispatch,
   setReadyCondition,
-};
-
-/**
- * Init Ad loader
- * @param {*} config Configuration object for adloader
- */
-export async function init(config = {}, ads = []) {
-  const log = debug('adloader:init');
-  log('Start');
-
-  createAds(ads);
-
-  Object.keys(config).forEach(key => {
-    if (R.has(key, state)) {
-      log(`Setting state.${key} to ${config[key]}`);
-      state[key] = config[key];
-    } else {
-      log(`Unknown state property: ${key}`);
+  ads: [],
+  global: false,
+  initialized: false,
+  loadGptScript: true,
+  ready: false,
+  set labelHeight(height) {
+    if (isBetween(height, 6, 24)) {
+      privateState.labelHeight = height;
     }
-  });
+  },
+  get labelHeight() {
+    return privateState.labelHeight;
+  },
+  adUnit: '/36021320/ztest_autotest',
+  testAdUnit: '/36021320/ztest_autotest',
+  plugins: [],
+  readyConditions: {
+    initializationDone: false,
+    pluginsReady: false,
+    gptEnabled: false,
+  },
+  breakpoints: {
+    desktop: 1025,
+    mobile: 300,
+    tablet: 768,
+  },
+  eventListeners: {
+    configure: [],
+    ready: [],
+    adCreated: [],
+    adLoad: [],
+    adRender: [],
+    adViewable: [],
+    windowResize: [],
+  },
+  targeting: [['page', 'test'], ['tags', []], ['test', 'true']],
+  init: async (config = {}, ads = []) => {
+    const log = debug('adloader:init');
 
-  gpt.configure();
+    if (adloader.initialized) {
+      log('Adloader can only be initialized once');
+      return;
+    }
 
-  if (state.global) {
-    log(`Exposing adloader with global window.${state.global}`);
-    window[state.global] = adloader;
-  }
+    log('Start');
+    adloader.initialized = true;
 
-  await registerPlugins();
+    const errors = validateConfig(config);
+    if (errors) {
+      errors.forEach(error => log(error));
+    } else {
+      Object.assign(adloader, config);
 
-  log('Finish');
-  return true;
-}
+      if (adloader.global) {
+        log(`Exposing adloader with global window.${adloader.global}`);
+        window[adloader.global] = adloader;
+      }
+
+      if (adloader.loadGptScript) {
+        gpt.loadGptScript();
+      }
+
+      adloader.ads = createAds(ads);
+
+      await gpt.configure();
+      await gpt.setTargeting(adloader.targeting);
+      await gpt.addEventListeners();
+      await registerPlugins();
+      await gpt.enable();
+      setReadyCondition('initializationDone', true);
+      log('Finish');
+    }
+  },
+};
 
 export default adloader;

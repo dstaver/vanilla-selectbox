@@ -1,4 +1,4 @@
-import { state } from './state';
+import adloader from './index';
 
 const debug = require('debug');
 /**
@@ -7,10 +7,10 @@ const debug = require('debug');
  * @param {string} eventName
  * @param {object} data
  */
-export async function dispatch(eventName, data) {
+export default async function dispatch(eventName, data) {
   const log = debug(`adloader:${eventName}`);
   log(`Dispatch ${eventName} event with data`, data);
-  const listeners = state.eventListeners[eventName];
+  const listeners = adloader.eventListeners[eventName];
   if (listeners && Array.isArray(listeners) && listeners.length) {
     listeners.forEach(callback => callback(data));
   }

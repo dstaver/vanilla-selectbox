@@ -1,6 +1,48 @@
-.ad {
-  background-color: #3C0;
-  color: white;
-  padding: 2rem;
-  margin-bottom: 1rem;
+* {
+  box-sizing: border-box;
 }
+
+html {
+  font-size: 16px;
+  font-family: sans-serif;
+}
+
+body {
+  font-size: 1rem;
+}
+
+.ad {
+  background-color: #dfdfdf;
+  display: inline-block;
+  position: relative;
+  padding: 10px;
+  margin-bottom: 10px;
+  box-sizing: content-box;
+  text-align: center;
+
+  &::before {
+    display: block;
+    padding-bottom: 10px;
+  }
+
+  &--banner-top {
+    > div {
+      width: 1000px;
+      height: 300px;
+    }
+    &::before {
+      content: 'banner_top';
+    }
+  }
+
+  &--banner-middle {
+    > div {
+      width: 580px;
+      height: 400px;
+    }
+    &::before {
+      content: 'banner_middle';
+    }
+  }
+}
+
