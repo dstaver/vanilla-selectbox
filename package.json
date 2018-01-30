@@ -15,14 +15,10 @@
   "main": "dist/adloader.cjs.js",
   "module": "dist/adloader.esm.js",
   "browser": "dist/adloader.umd.js",
-  "husky": {
-    "hooks": {
-      "pre-commit": "run-p test lint",
-      "pre-push": "run-p test lint md",
-      "post-merge": "yarn"
-    }
-  },
   "scripts": {
+    "precommit": "run-p test lint",
+    "prepush": "run-p test lint md",
+    "postmerge": "yarn",
     "md": "jsdoc2md --template README.hbs --files './src/adloader/**/*.js' > README.md",
     "start": "run-s build dev browsersync",
     "browsersync": "browser-sync start --config browsersync.config.js",
@@ -68,7 +64,7 @@
     "eslint-plugin-import": "^2.8.0",
     "eslint-plugin-jest": "^21.7.0",
     "eslint-plugin-prettier": "^2.5.0",
-    "husky": "^0.15.0-rc.3",
+    "husky": "^0.14.3",
     "jest": "^22.1.4",
     "jest-css-modules": "^1.1.0",
     "jsdoc": "^3.5.5",
