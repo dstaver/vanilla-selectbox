@@ -268,7 +268,7 @@ Initialize adloader
 | --- | --- | --- |
 | config | <code>object</code> | Configuration object |
 | config.global | <code>string</code> | Expose adloader as a global on window |
-| config.loadGptScript | <code>boolean</code> | Load the gpt library. Disable if you want to load this on your own |
+| config.loadGptScript | <code>boolean</code> | Load the gpt library. Disable if you want to load gpt on your own |
 | config.labelHeight | <code>number</code> | Font size of ad labels |
 | ads | <code>array</code> | Array of ads to register |
 
