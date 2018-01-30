@@ -1,3 +1,4 @@
+/** @module events */
 import { createLogger } from '../log';
 
 const eventListeners = {

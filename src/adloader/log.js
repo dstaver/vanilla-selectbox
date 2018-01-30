@@ -1,14 +1,18 @@
+/** @module log */
 import path from 'rambda/lib/path';
 
 const colorSupport = useColors();
 const prefixes = [];
-
+const loggers = {};
 /**
  * Basic logger that preserves line numbers in browsers, supports prefixes and has pretty colors in supported browsers
  * @param {string} prefix Prefix for log messages
  * @returns {function} Colorized log function that prefixes all statements
  */
 export function createLogger(prefix) {
+  if (loggers[prefix]) {
+    return loggers[prefix];
+  }
   const debug = window && path('localStorage.debug', window);
   if (
     debug &&
@@ -20,16 +24,21 @@ export function createLogger(prefix) {
       const color = selectColor(prefix);
       const colorStr = hslStr(color);
       const bgColorStr = hslStr(backgroundColor(color));
-      return Function.prototype.bind.call(
+      loggers[prefix] = Function.prototype.bind.call(
         console.log,
         console,
         `%c${prefix}`,
         `color: ${colorStr}; background-color: ${bgColorStr}; padding-left: 5px; padding-right: 5px;`
       );
     }
-    return Function.prototype.bind.call(console.log, console, prefix);
+    loggers[prefix] = Function.prototype.bind.call(
+      console.log,
+      console,
+      prefix
+    );
   }
-  return () => null;
+  loggers[prefix] = () => null;
+  return loggers[prefix];
 }
 
 /**

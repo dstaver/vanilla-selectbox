@@ -1,6 +1,6 @@
 /** @module ads */
-import { createLogger } from './log';
 
+import { createLogger } from './log';
 import { Ad } from './Ad';
 
 export const ads = [];
@@ -8,6 +8,7 @@ export const ads = [];
 export function getAds() {
   return ads;
 }
+
 /**
  * Find an ad by its ID
  * @param {string} id
