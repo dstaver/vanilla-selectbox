@@ -10,10 +10,10 @@ const loggers = {};
  * @returns {function} Colorized log function that prefixes all statements
  */
 export function createLogger(prefix) {
+  const debug = window && path('localStorage.debug', window);
   if (loggers[prefix]) {
     return loggers[prefix];
   }
-  const debug = window && path('localStorage.debug', window);
   if (
     debug &&
     (prefix === debug ||
@@ -30,12 +30,14 @@ export function createLogger(prefix) {
         `%c${prefix}`,
         `color: ${colorStr}; background-color: ${bgColorStr}; padding-left: 5px; padding-right: 5px;`
       );
+    } else {
+      loggers[prefix] = Function.prototype.bind.call(
+        console.log,
+        console,
+        prefix
+      );
     }
-    loggers[prefix] = Function.prototype.bind.call(
-      console.log,
-      console,
-      prefix
-    );
+    return loggers[prefix];
   }
   loggers[prefix] = () => null;
   return loggers[prefix];

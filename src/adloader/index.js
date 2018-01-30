@@ -5,24 +5,31 @@ import * as gpt from './gpt';
 import * as v from './validators';
 import { getAds, createAds } from './ads';
 import { setOptions } from './options';
-import { addReadyConditions, setReadyCondition } from './ready';
+import { isReady, addReadyConditions, setReadyCondition } from './ready';
 import { registerPlugins } from './plugins/index';
+import { subscribe, dispatch } from './events';
 
 const log = createLogger('adloader');
 
 let initialized = false;
 
-const adloader = {
+export const adloader = {
   get ads() {
     return getAds();
   },
+  init,
+  addReadyConditions,
+  setReadyCondition,
+  subscribe,
+  dispatch,
+  isReady,
 };
 
 /**
  * Initialize adloader
  * @param config               {object}  Configuration object
  * @param config.global        {string}  Expose adloader as a global on window
- * @param config.loadGptScript {boolean} Load the gpt library. Disable if you want to load this on your own
+ * @param config.loadGptScript {boolean} Load the gpt library. Disable if you want to load gpt on your own
  * @param config.labelHeight   {number}  Font size of ad labels
  * @param ads                  {array}   Array of ads to register
  */
