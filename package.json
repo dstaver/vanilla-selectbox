@@ -17,8 +17,8 @@
   "browser": "dist/adloader.umd.js",
   "husky": {
     "hooks": {
-      "pre-commit": "npm test",
-      "pre-push": "npm test",
+      "pre-commit": "run-p test lint",
+      "pre-push": "run-p test lint md",
       "post-merge": "yarn"
     }
   },
