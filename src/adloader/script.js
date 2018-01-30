@@ -3,15 +3,19 @@ import { createLogger } from './log';
 
 const log = createLogger('adloader:loadScript');
 /**
- * Loads a script asynchronously and runs callback when the script has loaded
+ * Promisified script loader
  *
  * @example
  * // Load Audience Reports and log to the console when done
- * loadScriptAsync('//sak.userreport.com/startsiden/launcher.js', () => {
+ * loadScriptAsync('//sak.userreport.com/startsiden/launcher.js')
+ * .then(() => {
  *   console.log('Audience Reports script loaded');
+ * })
+ * .catch((error) => {
+ *   console.error(error.message);
  * });
  * @param {string} src URL of the script to load
- * @param {function} cb Callback to run when the load is complete
+ * @returns {promise} Promise that resolves when the script has loaded
  */
 export function loadScriptAsync(src) {
   return new Promise((resolve, reject) => {

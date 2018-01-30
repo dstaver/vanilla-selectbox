@@ -1,7 +1,17 @@
 {
-  "name": "adloader",
+  "name": "@startsiden/lib-adloader",
+  "description": "Helper library to configure and load ads from DFP (Doubleclick For Publishers).",
+  "author": "Daniel Staver <daniel@petraflux.com>",
   "version": "1.0.0",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/startsiden/lib-adloader2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/startsiden/lib-adloader2/issues"
+  },
+  "homepage": "https://github.com/startsiden/lib-adloader2",
   "main": "dist/adloader.cjs.js",
   "module": "dist/adloader.esm.js",
   "browser": "dist/adloader.umd.js",
