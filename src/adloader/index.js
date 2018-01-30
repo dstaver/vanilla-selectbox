@@ -1,97 +1,64 @@
-/**
- * @module adloader
- */
+/** @module adloader */
+import { createLogger } from './log';
+
 import * as gpt from './gpt';
-import subscribe from './subscribe';
-import dispatch from './dispatch';
-import { createAds } from './ad';
-import { setReadyCondition } from './ready';
-import { registerPlugins } from './plugins';
-import { isBetween, validateConfig } from './validators';
+import * as v from './validators';
+import { getAds, createAds } from './ads';
+import { setOptions } from './options';
+import { addReadyConditions, setReadyCondition } from './ready';
+import { registerPlugins } from './plugins/index';
 
-const debug = require('debug');
+const log = createLogger('adloader');
 
-const privateState = {
-  labelHeight: 11,
-};
+let initialized = false;
 
 const adloader = {
-  subscribe,
-  dispatch,
-  setReadyCondition,
-  ads: [],
-  global: false,
-  initialized: false,
-  loadGptScript: true,
-  ready: false,
-  set labelHeight(height) {
-    if (isBetween(height, 6, 24)) {
-      privateState.labelHeight = height;
-    }
+  get ads() {
+    return getAds();
   },
-  get labelHeight() {
-    return privateState.labelHeight;
-  },
-  adUnit: '/36021320/ztest_autotest',
-  testAdUnit: '/36021320/ztest_autotest',
-  plugins: [],
-  readyConditions: {
-    initializationDone: false,
-    pluginsReady: false,
-    gptEnabled: false,
-  },
-  breakpoints: {
-    desktop: 1025,
-    mobile: 300,
-    tablet: 768,
-  },
-  eventListeners: {
-    configure: [],
-    ready: [],
-    adCreated: [],
-    adLoad: [],
-    adRender: [],
-    adViewable: [],
-    windowResize: [],
-  },
-  targeting: [['page', 'test'], ['tags', []], ['test', 'true']],
-  init: async (config = {}, ads = []) => {
-    const log = debug('adloader:init');
+};
 
-    if (adloader.initialized) {
-      log('Adloader can only be initialized once');
-      return;
-    }
-
-    log('Start');
-    adloader.initialized = true;
-
-    const errors = validateConfig(config);
-    if (errors) {
-      errors.forEach(error => log(error));
+/**
+ * Initialize adloader
+ * @param config               {object}  Configuration object
+ * @param config.global        {string}  Expose adloader as a global on window
+ * @param config.loadGptScript {boolean} Load the gpt library. Disable if you want to load this on your own
+ * @param config.labelHeight   {number}  Font size of ad labels
+ * @param ads                  {array}   Array of ads to register
+ */
+export function init(opt, ads) {
+  log('init() start');
+  return new Promise((resolve, reject) => {
+    if (initialized) {
+      reject(
+        new Error('Already initialized. Adloader can only be initialized once')
+      );
     } else {
-      Object.assign(adloader, config);
+      initialized = true;
+      addReadyConditions('initializationDone', 'pluginsReady', 'gptEnabled');
+      createAds(ads);
+      const options = setOptions(opt);
 
-      if (adloader.global) {
-        log(`Exposing adloader with global window.${adloader.global}`);
-        window[adloader.global] = adloader;
+      if (v.isString(options.global)) {
+        log(`Exposing adloader with global window.${options.global}`);
+        window[options.global] = adloader;
       }
 
-      if (adloader.loadGptScript) {
+      if (options.loadGptScript) {
         gpt.loadGptScript();
       }
 
-      adloader.ads = createAds(ads);
-
-      await gpt.configure();
-      await gpt.setTargeting(adloader.targeting);
-      await gpt.addEventListeners();
-      await registerPlugins();
-      await gpt.enable();
-      setReadyCondition('initializationDone', true);
-      log('Finish');
+      gpt
+        .configure(options.loadGptScript)
+        .then(() => gpt.setTargeting(options.targeting))
+        .then(gpt.addEventListeners)
+        .then(() => registerPlugins(options.plugins))
+        .then(gpt.enable)
+        .then(() => {
+          setReadyCondition('initializationDone', true);
+          log('init() done');
+          resolve();
+        });
     }
-  },
-};
-
-export default adloader;
+  });
+}

@@ -1,28 +1,34 @@
-import { loadScriptAsync } from '../../loadScript';
+import { createLogger } from '../../log';
 
-const log = require('debug')('adloader:AudienceReportsPlugin');
+import { loadScriptAsync } from '../../script';
+
+const log = createLogger('adloader:AudienceReportsPlugin');
 
 const url = '//sak.userreport.com/startsiden/launcher.js';
 
-export default async function AudienceReportsPlugin(adloader) {
-  log('Register plugin');
-  adloader.setReadyCondition('audienceReports', false);
+export default function AudienceReportsPlugin(adloader) {
+  return new Promise(resolve => {
+    log('Register plugin');
+    adloader.setReadyCondition('audienceReports', false);
 
-  loadScriptAsync(url, () => {
-    log('Audience Reports script loaded');
+    loadScriptAsync(url)
+      .then(() => {
+        log('Audience Reports script loaded');
+      })
+      .catch(err => log(err.message));
+
+    log('Targeting start');
+    doAudienceReportsTargeting('apr', window);
+
+    window.apr('dfp-targeting-done', () => {
+      log('Targeting done');
+      adloader.setReadyCondition('audienceReports', true);
+    });
+
+    log('Plugin registered');
+
+    resolve('AudienceReportsPlugin registered successfully');
   });
-
-  log('Targeting start');
-  doAudienceReportsTargeting('apr', window);
-
-  window.apr('dfp-targeting-done', () => {
-    log('Targeting done');
-    adloader.setReadyCondition('audienceReports', true);
-  });
-
-  log('Plugin registered');
-
-  return 'AudienceReportsPlugin registered successfully';
 }
 
 /* eslint-disable */

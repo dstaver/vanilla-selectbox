@@ -1,51 +1,28 @@
-import adloader from './index';
-import dispatch from './dispatch';
-import subscribe from './subscribe';
-import * as gpt from './gpt';
-import { isNotEmptyArray } from './validators';
+import elementReady from 'element-ready-es5';
+import all from 'rambda/lib/all';
+import values from 'rambda/lib/values';
 
-const R = require('rambda');
-const elementReady = require('element-ready-es5');
-const debug = require('debug');
-
-export function getAdById(id) {
-  const adConfig = adloader.ads.find(item => item.id === id);
-  return adConfig.ad;
-}
+import { createLogger } from './log';
+import { isReady } from './ready';
+import { options } from './options';
+import { dispatch, subscribe } from './events';
+import * as v from './validators';
 
 /**
- * Configure many ads at once
- * @param {array} ads Array of ads to configure
- */
-export function createAds(ads = []) {
-  const log = debug('adloader:ad:createAds');
-  log(`Creating ${ads.length} ads`);
-  const result = ads.map(adConfig => {
-    log(`Creating ad with ID ${adConfig.id}`);
-    const ad = new Ad(adConfig);
-    return ad;
-  });
-  log('Done');
-  return result;
-}
-
-/**
- * The actual ads are instances of this class
- *
- *
+ * Ads are created as instances of this class
  * @class Ad
+ * @param {object}    options           Configuration options for the Ad
+ * @param {string}    options.id        ID of the DOM element that will contain the ad
+ * @param {array}     options.plugins   Array of plugins to use for the ad
+ * @param {array}     options.size      Size to use for the ad
+ * @param {targeting} options.targeting Targeting for the ad
  */
-class Ad {
-  /**
-   * Creates an instance of Ad.
-   * @param {any} { id, plugins, size, targeting }
-   * @memberof Ad
-   */
+export class Ad {
   constructor({ id, plugins, size, targeting }) {
-    this.log = debug(`adloader:ad:${id}`);
+    this.log = createLogger(`adloader:ad:${id}`);
     this.log('Constructor');
 
-    this.adUnit = adloader.adUnit;
+    this.adUnit = options.adUnit;
     this.id = id;
     this.plugins = [];
     this.size = size;
@@ -66,39 +43,80 @@ class Ad {
     };
 
     this.registerPlugins(plugins);
-    this.getElement();
+    this.waitForElementReady();
 
-    this.readyUnsubscribe = subscribe('ready', this.display);
+    this.readyUnsubscribe = subscribe('ready', this.display.bind(this));
   }
 
-  // Try to display ad
-  display = async () => {
-    // Adloader is ready, ad is ready and ad has not already been displayed
-    if (adloader.ready && this.ready && !this.hasBeenDisplayed) {
-      this.hasBeenDisplayed = true;
-      this.log('Display');
-      this.slot = await gpt.defineSlot(this);
-      this.log(this.slot);
-      await gpt.setAdTargeting(this);
-      await gpt.display(this.id);
-      await gpt.refresh([this.slot]);
-    }
-  };
+  /**
+   * Try to display the ad
+   *
+   * The ad will display if it hasn't already been displayed and all ready conditions are true
+   * @memberof Ad
+   */
+  display() {
+    this.log('Try to display');
+    const ad = this;
+    return new Promise((resolve, reject) => {
+      if (isReady() && ad.ready && !ad.hasBeenDisplayed) {
+        ad.hasBeenDisplayed = true;
+        ad.log('Display');
+        const { googletag } = window;
+        googletag.cmd.push(() => {
+          if (!ad.slot) {
+            ad.log('googletag.defineSlot() start');
+            ad.slot = googletag
+              .defineSlot(ad.adUnit, ad.size, ad.id)
+              .addService(googletag.pubads());
+            ad.log('googletag.defineSlot() done');
+            ad.log(ad.slot);
+          }
+          if (ad.slot) {
+            if (ad.targeting) {
+              ad.log('googletag.setTargeting() Start');
+              Object.keys(ad.targeting).forEach(key => {
+                const value = ad.targeting[key];
+                if (value && (v.isString(value) || v.isNotEmptyArray(value))) {
+                  ad.log(
+                    `googletag.setTargeting() setting key *${key}* to ${value}`
+                  );
+                  ad.slot.setTargeting(key, value);
+                }
+              });
+              ad.log('googletag.setTargeting() done');
+            }
+            ad.log('GPT: Refresh done');
+            googletag.pubads().refresh([ad.slot], {
+              changeCorrelator: false,
+            });
+            ad.log('GPT: Refresh done');
+          }
+        });
+      } else {
+        const err = new Error('Adloader or Ad is not ready');
+        reject(err);
+      }
+    });
+  }
 
-  getElement = async () => {
-    elementReady(`#${this.id}`).then(el => {
+  /**
+   * Waits for the DOM element to exist, then sets the ready condition elementReady to true
+   * @memberof Ad
+   */
+  waitForElementReady() {
+    return elementReady(`#${this.id}`).then(el => {
       this.element = el;
       this.setReadyCondition('elementReady', true);
       dispatch('ad:elementReady', this);
     });
-  };
+  }
 
   /**
    * Update a ready condition and trigger ready if all conditions are true after update
    * @param {string} name Name of condition to update
    * @param {boolean} value The condition is either true or false
    */
-  setReadyCondition = async (name, value) => {
+  setReadyCondition(name, value) {
     // Update readyCondition with new value
     this.log(`Setting ready condition ${name} to ${value}`);
     this.readyConditions[name] = value;
@@ -107,31 +125,37 @@ class Ad {
       // A true value causes all conditions to be checked
       if (!this.ready) {
         // All values of this.readyConditions equals true
-        if (R.all(x => x === true, R.values(this.readyConditions))) {
+        if (all(x => x === true, values(this.readyConditions))) {
           this.ready = true;
           this.log('Ready');
-          this.display();
-          dispatch('ad:ready', this);
+          this.display()
+            .then(() => dispatch('ad:ready', this))
+            .catch(err => this.log(err.message));
         }
       }
     }
-  };
+  }
 
   /**
    * Register an array of plugins
    * @param {array} plugins Array of plugins to register
    * @memberof Ad
    */
-  registerPlugins = plugins => {
-    if (isNotEmptyArray(plugins)) {
+  registerPlugins(plugins) {
+    if (v.isNotEmptyArray(plugins)) {
       this.log(`Register ${plugins.length} plugins`);
       plugins.forEach(plugin => this.registerPlugin(plugin));
     }
     this.setReadyCondition('pluginsReady', true);
-  };
+  }
 
-  registerPlugin = plugin => {
+  /**
+   * Register a plugin
+   * @param {plugin} plugin Plugin to register
+   * @memberof Ad
+   */
+  registerPlugin(plugin) {
     this.log('register plugin');
     plugin(this);
-  };
+  }
 }

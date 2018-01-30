@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>gpt.js - Documentation</title>
+
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="Ad.html">Ad</a><ul class='methods'><li data-type='method'><a href="Ad.html#display">display</a></li><li data-type='method'><a href="Ad.html#registerPlugin">registerPlugin</a></li><li data-type='method'><a href="Ad.html#registerPlugins">registerPlugins</a></li><li data-type='method'><a href="Ad.html#setReadyCondition">setReadyCondition</a></li><li data-type='method'><a href="Ad.html#waitForElementReady">waitForElementReady</a></li></ul></li></ul><h3>Modules</h3><ul><li><a href="module-adloader.html">adloader</a><ul class='methods'><li data-type='method'><a href="module-adloader.html#.init">init</a></li></ul></li><li><a href="module-ads.html">ads</a><ul class='methods'><li data-type='method'><a href="module-ads.html#.createAds">createAds</a></li><li data-type='method'><a href="module-ads.html#.getAdById">getAdById</a></li></ul></li><li><a href="module-gpt.html">gpt</a><ul class='methods'><li data-type='method'><a href="module-gpt.html#.addEventListeners">addEventListeners</a></li><li data-type='method'><a href="module-gpt.html#.configure">configure</a></li><li data-type='method'><a href="module-gpt.html#.defineSlot">defineSlot</a></li><li data-type='method'><a href="module-gpt.html#.display">display</a></li><li data-type='method'><a href="module-gpt.html#.enable">enable</a></li><li data-type='method'><a href="module-gpt.html#.loadGptScript">loadGptScript</a></li><li data-type='method'><a href="module-gpt.html#.refresh">refresh</a></li><li data-type='method'><a href="module-gpt.html#.setTargeting">setTargeting</a></li></ul></li><li><a href="module-options.html">options</a><ul class='methods'><li data-type='method'><a href="module-options.html#.validateOptions">validateOptions</a></li></ul></li><li><a href="module-ready.html">ready</a><ul class='methods'><li data-type='method'><a href="module-ready.html#.addReadyConditions">addReadyConditions</a></li><li data-type='method'><a href="module-ready.html#.getReadyCondition">getReadyCondition</a></li><li data-type='method'><a href="module-ready.html#.isReady">isReady</a></li><li data-type='method'><a href="module-ready.html#.removeReadyCondition">removeReadyCondition</a></li><li data-type='method'><a href="module-ready.html#.setReadyCondition">setReadyCondition</a></li></ul></li><li><a href="module-script.html">script</a><ul class='methods'><li data-type='method'><a href="module-script.html#.loadScriptAsync">loadScriptAsync</a></li></ul></li><li><a href="module-validators.html">validators</a><ul class='methods'><li data-type='method'><a href="module-validators.html#.getLength">getLength</a></li><li data-type='method'><a href="module-validators.html#.hasLength">hasLength</a></li><li data-type='method'><a href="module-validators.html#.isArray">isArray</a></li><li data-type='method'><a href="module-validators.html#.isArrayOfNumbers">isArrayOfNumbers</a></li><li data-type='method'><a href="module-validators.html#.isBetween">isBetween</a></li><li data-type='method'><a href="module-validators.html#.isNegative">isNegative</a></li><li data-type='method'><a href="module-validators.html#.isNotEmptyArray">isNotEmptyArray</a></li><li data-type='method'><a href="module-validators.html#.isNotEmptyString">isNotEmptyString</a></li><li data-type='method'><a href="module-validators.html#.isNotNumeric">isNotNumeric</a></li><li data-type='method'><a href="module-validators.html#.isNumeric">isNumeric</a></li><li data-type='method'><a href="module-validators.html#.isObject">isObject</a></li><li data-type='method'><a href="module-validators.html#.isPositive">isPositive</a></li><li data-type='method'><a href="module-validators.html#.isString">isString</a></li><li data-type='method'><a href="module-validators.html#.isValidTargetingOptions">isValidTargetingOptions</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#backgroundColor">backgroundColor</a></li><li><a href="global.html#createLogger">createLogger</a></li><li><a href="global.html#dispatch">dispatch</a></li><li><a href="global.html#hslStr">hslStr</a></li><li><a href="global.html#selectColor">selectColor</a></li><li><a href="global.html#subscribe">subscribe</a></li><li><a href="global.html#useColors">useColors</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">gpt.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/** @module gpt */
+import { createLogger } from './log';
+
+import { loadScriptAsync } from './script';
+import { setReadyCondition } from './ready';
+import onImpressionViewable from './events/onImpressionViewable';
+import onSlotLoad from './events/onSlotLoad';
+import onSlotRenderEnded from './events/onSlotRenderEnded';
+
+window.googletag = window.googletag || {};
+window.googletag.cmd = window.googletag.cmd || [];
+
+const log = createLogger('adloader:gpt');
+
+/**
+ * Display ad by ID
+ *
+ * @param {any} id
+ */
+export function display(id) {
+  return new Promise((resolve, reject) => {
+    const { googletag } = window;
+    googletag.cmd.push(() => {
+      const el = document.getElementById(id);
+      if (el) {
+        log(`display() element with ID ${id}`);
+        googletag.display(id);
+        resolve(id);
+      } else {
+        const err = new Error(`display() could not find element with ID ${id}`);
+        reject(err);
+      }
+    });
+  });
+}
+
+/**
+ * Refresh slot
+ *
+ * @param {any} slots
+ */
+export function refresh(...slots) {
+  return new Promise((resolve, reject) => {
+    const { googletag } = window;
+    if (slots.length) {
+      log('refresh() start');
+      googletag.cmd.push(() => {
+        googletag.pubads().refresh(slots, {
+          changeCorrelator: false,
+        });
+        log('refresh() done');
+        resolve();
+      });
+    } else {
+      const err = new Error('No slots to refresh');
+      reject(err);
+    }
+  });
+}
+
+/**
+ * Initial GPT configuration
+ * @param {boolean} loadGptScript If true it will load the gpt.js script asynchronously
+ */
+export function configure() {
+  return new Promise(resolve => {
+    const { googletag } = window;
+    log('configure() start');
+    googletag.cmd.push(() => {
+      // googletag.pubads().collapseEmptyDivs(false);
+      googletag.pubads().setCentering(true);
+      googletag.pubads().enableSingleRequest();
+      googletag.pubads().disableInitialLoad();
+      log('configure() done');
+      resolve();
+    });
+  });
+}
+/**
+ * Load GPT script tag
+ */
+export function loadGptScript() {
+  log('loadGptScript() start');
+  return loadScriptAsync('https://www.googletagservices.com/tag/js/gpt.js')
+    .then(() => log('loadGptScript() loaded'))
+    .catch(error => log(error));
+}
+
+/**
+ * Define slot
+ *
+ * @param {any} ad
+ * @returns {promise} Promise that resolves when the gpt command is executed
+ */
+export function defineSlot(ad) {
+  return new Promise((resolve, reject) => {
+    const { googletag } = window;
+    googletag.cmd.push(() => {
+      ad.log('Define slot');
+      ad.log(ad.adUnit, ad.size, ad.id);
+      const slot = googletag
+        .defineSlot(ad.adUnit, ad.size, ad.id)
+        .addService(googletag.pubads());
+      if (slot) {
+        resolve(slot);
+      } else {
+        reject(new Error(`Slot configuration failed for ad ${ad.id}`));
+      }
+    });
+  });
+}
+
+/**
+ * enabled
+ *
+ * @returns {promise} Promise that resolves when the gpt command is executed
+ */
+export function enable() {
+  return new Promise(resolve => {
+    const { googletag } = window;
+    log('enable() start');
+    googletag.cmd.push(() => {
+      googletag.enableServices();
+      setReadyCondition('gptEnabled', true);
+      log('enable() done');
+      resolve();
+    });
+  });
+}
+
+/**
+ * Connects the adloader event listeners to the standard gpt event listeners
+ *
+ * @returns {promise} Promise that resolves when the gpt command is executed
+ */
+export function addEventListeners() {
+  return new Promise(resolve => {
+    const { googletag } = window;
+    log('addEventListeners() start');
+    googletag.cmd.push(() => {
+      googletag.pubads().addEventListener('slotOnload', onSlotLoad);
+      googletag.pubads().addEventListener('slotRenderEnded', onSlotRenderEnded);
+      googletag
+        .pubads()
+        .addEventListener('impressionViewable', onImpressionViewable);
+      log('addEventListeners() done');
+      resolve();
+    });
+  });
+}
+
+/**
+ * Set adloader targeting
+ * @param {any} targeting
+ * @returns {promise} Promise that resolves when the gpt command is executed
+ */
+export function setTargeting(targeting) {
+  return new Promise(resolve => {
+    log('setTargeting() start');
+    const { googletag } = window;
+    googletag.cmd.push(() => {
+      Object.keys(targeting).forEach(key => {
+        const value = targeting[key];
+        log('Set targeting', key, 'to', value);
+        googletag.pubads().setTargeting(key, value);
+      });
+      log('setTargeting() done');
+      resolve();
+    });
+  });
+}
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> on Tue Jan 30 2018 15:38:00 GMT+0100 (CET) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+</body>
+</html>

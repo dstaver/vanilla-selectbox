@@ -1,11 +1,11 @@
-import { getAdById } from '../ad';
-import dispatch from '../dispatch';
+import { createLogger } from '../log';
 
-const debug = require('debug');
+import { getAdById } from '../ads';
+import { dispatch } from './index';
 
 export default event => {
   const id = event.slot.getSlotElementId();
-  const log = debug(`adloader:ad:${id}`);
+  const log = createLogger(`adloader:ad:${id}`);
   log('Slot render ended');
 
   const ad = getAdById(id);

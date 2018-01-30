@@ -1,9 +1,19 @@
-export default async function DocumentVisibilityPlugin(adloader) {
-  adloader.setReadyCondition('documentVisible', !document.hidden);
+import { createLogger } from '../../log';
 
-  document.addEventListener('visibilitychange', () =>
-    adloader.setReadyCondition('documentVisible', !document.hidden)
-  );
+const log = createLogger('adloader:DocumentVisibilityPlugin');
 
-  return 'DocumentVisibilityPlugin registered successfully';
+export default function DocumentVisibilityPlugin(adloader) {
+  return new Promise(resolve => {
+    log('Register plugin');
+
+    adloader.setReadyCondition('documentVisible', !document.hidden);
+
+    document.addEventListener('visibilitychange', () =>
+      adloader.setReadyCondition('documentVisible', !document.hidden)
+    );
+
+    log('Plugin registered');
+
+    resolve('DocumentVisibilityPlugin registered successfully');
+  });
 }

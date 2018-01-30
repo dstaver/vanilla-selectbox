@@ -1,9 +1,13 @@
-import { getAdById } from '../ad';
-import dispatch from '../dispatch';
+import { getAdById } from '../ads';
+import { dispatch } from './index';
 
 export default e => {
   const id = e.slot.getSlotElementId();
   const ad = getAdById(id);
 
-  dispatch('adLoad', ad);
+  if (ad) {
+    ad.log('onSlotLoad event');
+
+    dispatch('adLoad', ad);
+  }
 };

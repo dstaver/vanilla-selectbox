@@ -26,7 +26,20 @@
     "no-console": "off",
     "no-use-before-define": "off",
     "no-underscore-dangle": "off",
+    "import/extensions": "off",
     "import/prefer-default-export": "off",
+    "import/no-extraneous-dependencies": [
+      "error",
+      {
+        "devDependencies": [
+          "./*.js",
+          "**/*.spec.js",
+          "**/cli/*.js"
+        ],
+        "optionalDependencies": false,
+        "peerDependencies": false
+      }
+    ],
     "prettier/prettier": [
       "error",
       {

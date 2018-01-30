@@ -1,29 +1,70 @@
-import adloader from './index';
-import dispatch from './dispatch';
+/** @module ready */
+import all from 'rambda/lib/all';
+import values from 'rambda/lib/values';
+import { createLogger } from './log';
+import { dispatch } from './events';
 
-const R = require('rambda');
-const log = require('debug')('adloader:setReadyCondition');
+const log = createLogger('adloader:ready');
 
-export async function setReadyCondition(name, value) {
-  // Nothing happens if the value is the same as before
-  if (R.prop(name, adloader.readyConditions) === value) {
-    return;
-  }
-  // Update readyCondition with new value
-  log(`Setting ready condition ${name} to ${value}`);
-  adloader.readyConditions[name] = value;
+const readyConditions = {};
+let ready = false;
 
-  // No further checking neccessary
-  if (adloader.ready && value === true) {
-    return;
-  }
+/**
+ * Add one or more ready conditions
+ * @param {...string} args Name of conditions to remove
+ */
+export function addReadyConditions(...args) {
+  args.forEach(arg => {
+    readyConditions[arg] = false;
+  });
+}
 
-  // A true value causes all conditions to be checked
-  if (!adloader.ready && value === true) {
-    // All values of adloader.readyConditions equals true
-    if (R.all(x => x === true, R.values(adloader.readyConditions))) {
-      adloader.ready = true;
+/**
+ * Get value of ready condition by name
+ * @param {string} name
+ * @returns {boolean|undefined} True or false if condition exists, undefined if not
+ */
+export function getReadyCondition(name) {
+  return readyConditions[name];
+}
+
+/**
+ * Remove ready condition and update readystate
+ * @param {string} name Name of condition to remove
+ */
+export function removeReadyCondition(name) {
+  delete readyConditions[name];
+  isReady();
+}
+
+/**
+ * Check if all ready conditions are true and update the ready state.
+ * Dispatches ready event whenever the ready state changes from false to true
+ * @returns {boolean} True if ready
+ */
+export function isReady() {
+  log('Checking ready state');
+  // Check all ready conditions
+  if (all(value => value === true, values(readyConditions))) {
+    // Dispatch ready event only if ready was previously false
+    if (!ready === true) {
+      ready = true;
       dispatch('ready', true);
     }
+  } else {
+    ready = false;
   }
+  return ready;
+}
+
+/**
+ * Set named ready condition to true or false
+ * Return ready state
+ * @param {any} name Name of condition to set
+ * @param {boolean} value True or false
+ * @returns {boolean} Ready state
+ */
+export function setReadyCondition(name, value) {
+  readyConditions[name] = !!value;
+  return isReady();
 }
