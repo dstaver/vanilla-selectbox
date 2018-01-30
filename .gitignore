@@ -1,13 +1,7 @@
 # Project ignores
 # --------------------------------------------------------------------
-.fusebox
-cache/data.json
-copy-adloader.sh
 dist
-imagecache
-public/*
-src/client/sass/2-mixins/_m-svg.scss
-/static/*
+docs
 test-reports/*
 test-results.xml
 
