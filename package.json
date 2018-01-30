@@ -6,9 +6,11 @@
   "module": "dist/adloader.esm.js",
   "browser": "dist/adloader.umd.js",
   "scripts": {
+    "start": "run-s build dev browsersync",
     "browsersync": "browser-sync start --config browsersync.config.js",
-    "dev": "run-p build:*",
+    "dev": "run-p dev:*",
     "dev:js": "rollup -c rollup.config.dev.js",
+    "dev:static": "cpx './src/static/**' dist",
     "clean": "run-s clean:*",
     "clean:dist": "rm -rf dist/*",
     "clean:doc": "rm -rf docs/*",

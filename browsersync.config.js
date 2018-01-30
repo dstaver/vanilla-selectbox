@@ -7,7 +7,7 @@ module.exports = {
   },
   files: ['dist/**'],
   open: false,
-  port: 1234,
+  port: 3000,
   reloadDelay: 500,
   watchOptions: {
     ignoreInitial: false,
