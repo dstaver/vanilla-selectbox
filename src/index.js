@@ -4,6 +4,7 @@ import { createLogger } from './adloader/log';
 import { adloader } from './adloader';
 import AudienceReportsPlugin from './adloader/plugins/AudienceReportsPlugin';
 import DocumentVisibilityPlugin from './adloader/plugins/DocumentVisibilityPlugin';
+import './index.scss';
 
 const log = createLogger('adloader:testconfig');
 log('init start');
@@ -19,6 +20,20 @@ adloader
         size: [[1000, 300]],
         targeting: {
           position: 'banner_top',
+        },
+      },
+      {
+        id: 'skyscraper_right',
+        size: [
+          [120, 600],
+          [160, 600],
+          [180, 500],
+          [180, 600],
+          [280, 778],
+          [300, 600],
+        ],
+        targeting: {
+          position: 'skyscraper_right',
         },
       },
       {

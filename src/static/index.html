@@ -6,16 +6,25 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Adloader</title>
   <script src="index.js" async></script>
+  <link rel="stylesheet" href="adloader.css">
 </head>
 <body>
-  <h1>
-    Adloader test
-  </h1>
   <div class="ad ad--banner-top">
     <div id="banner_top"></div>
   </div>
-  <div class="ad ad--banner-middle">
-    <div id="banner_middle"></div>
+  <div class="ad ad--skyscraper-right">
+    <div id="skyscraper_right"></div>
+  </div>
+  <div class="page">
+    <h1>Adloader test page</h1>
+    <p><a href="/docs">API Documentation</a></p>
+    <script>
+      setTimeout(() => {
+        const div = document.createElement('div');
+        div.id = 'banner_middle';
+        document.body.appendChild(div);
+      },5000);
+    </script>
   </div>
 </body>
 </html>

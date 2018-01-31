@@ -1,10 +1,6 @@
+import { adloader } from '../index';
 import { createLogger } from '../log';
-
-import { setReadyCondition } from '../ready';
-
-const adloader = {
-  setReadyCondition,
-};
+import { promiseSerial } from '../promiseSerial';
 
 export function registerPlugins(plugins) {
   const log = createLogger('adloader:registerPlugins');
@@ -12,15 +8,10 @@ export function registerPlugins(plugins) {
   promiseSerial(plugins, adloader)
     .then(() => {
       log(`Register ${plugins.length} plugins done`);
-      setReadyCondition('pluginsReady', true);
+      adloader.setReadyCondition('pluginsReady', true);
     })
     .catch(err => {
       log(err.message);
-      setReadyCondition('pluginsReady', false);
+      adloader.setReadyCondition('pluginsReady', false);
     });
-}
-
-function promiseSerial(list, args) {
-  const p = Promise.resolve();
-  return list.reduce((pacc, fn) => pacc.then(fn(args)), p);
 }
