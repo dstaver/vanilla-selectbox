@@ -4,6 +4,7 @@ import { createLogger } from './adloader/log';
 import { adloader } from './adloader';
 import AudienceReportsPlugin from './adloader/plugins/AudienceReportsPlugin';
 import DocumentVisibilityPlugin from './adloader/plugins/DocumentVisibilityPlugin';
+import ScrollMonitorPlugin from './adloader/plugins/ScrollMonitorPlugin';
 import './index.scss';
 
 const log = createLogger('adloader:testconfig');
@@ -21,6 +22,7 @@ adloader
         targeting: {
           position: 'banner_top',
         },
+        plugins: [ScrollMonitorPlugin],
       },
       {
         id: 'skyscraper_right',
@@ -35,6 +37,7 @@ adloader
         targeting: {
           position: 'skyscraper_right',
         },
+        plugins: [ScrollMonitorPlugin],
       },
       {
         id: 'banner_middle',
@@ -42,6 +45,7 @@ adloader
         targeting: {
           position: 'banner_middle',
         },
+        plugins: [ScrollMonitorPlugin],
       },
     ]
   )

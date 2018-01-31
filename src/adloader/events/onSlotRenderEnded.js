@@ -9,10 +9,8 @@ export default event => {
   log('Slot render ended');
 
   const ad = getAdById(id);
-  log(ad);
   if (ad) {
     log('Determine type and size');
-    log(event);
     ad.isEmpty = event.isEmpty;
     if (ad.isEmpty) {
       log('Ad is empty');

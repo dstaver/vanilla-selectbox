@@ -21,10 +21,22 @@ export const options = {
   },
 };
 
+/**
+ * Get option object
+ * @returns {options} Current config
+ */
 export function getOptions() {
   return options;
 }
 
+/**
+ * Update options with new values
+ *
+ * Keys that doesn't already exist are not allowed
+ *
+ * Use addOption()  to define new options
+ * @param {object} opt New options object to apply to current options
+ */
 export function setOptions(opt) {
   const log = createLogger('adloader:options:setOptions');
   const errors = validateOptions(opt);

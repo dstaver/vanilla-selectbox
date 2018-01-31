@@ -4,8 +4,6 @@ Helper library for [GPT (Google Publisher Tags)](https://developers.google.com/d
 
 It can be used to configure ad with a single command, but is also designed to be modular. Components and functions can be imported individually to help with various aspects of ad configuration and loading.
 
-## Table of Contents
-
 ## Installation
 
 ```bash
@@ -21,7 +19,7 @@ yarn add @startsiden/lib-adloader
 ## Usage
 
 ```javascript
-import init from 'adloader';
+import { adloader } from 'adloader';
 
 const config = {
   adUnit: '/36021320/abcnyheter.no',
@@ -51,7 +49,7 @@ const config = {
   ]
 };
 
-init(config);
+adloader.init(config);
 ```
 
 ## Development
@@ -67,7 +65,6 @@ npm run watch
 You can now access the dev server on http://localhost:3000 with live reloading and automatic updates.
 
 The docs are available on http://localhost:3000/docs and are also automatically updated
-
 # API
 
 ## Modules
@@ -343,6 +340,34 @@ Check if current browser supports console color styling
 <a name="module_options"></a>
 
 ## options
+
+* [options](#module_options)
+    * [.getOptions()](#module_options.getOptions) ⇒ <code>options</code>
+    * [.setOptions(opt)](#module_options.setOptions)
+    * [.validateOptions(config)](#module_options.validateOptions) ⇒ <code>array</code>
+
+<a name="module_options.getOptions"></a>
+
+### options.getOptions() ⇒ <code>options</code>
+Get option object
+
+**Kind**: static method of [<code>options</code>](#module_options)  
+**Returns**: <code>options</code> - Current config  
+<a name="module_options.setOptions"></a>
+
+### options.setOptions(opt)
+Update options with new values
+
+Keys that doesn't already exist are not allowed
+
+Use addOption()  to define new options
+
+**Kind**: static method of [<code>options</code>](#module_options)  
+
+| Param | Type | Description |
+| --- | --- | --- |
+| opt | <code>object</code> | New options object to apply to current options |
+
 <a name="module_options.validateOptions"></a>
 
 ### options.validateOptions(config) ⇒ <code>array</code>

@@ -23,6 +23,7 @@ body {
   min-height: 100%;
   padding: 10px;
   text-align: left;
+  position: relative;
 }
 
 .ad {
@@ -40,7 +41,18 @@ body {
     }
   }
 
+  &--skyscraper-right {
+    position: absolute;
+    top: 0;
+    left: calc(100% + 10px);
+    > div {
+      width: 300px;
+      height: 778px;
+    }
+  }
+
   &--banner-middle {
+    margin-top: 1000px;
     > div {
       width: 580px;
       height: 400px;

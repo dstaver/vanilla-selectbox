@@ -35,7 +35,7 @@
     "build:doc": "run-s doc",
     "doc": "run-p doc:*",
     "doc:html": "jsdoc -c jsdoc.json",
-    "doc:md": "jsdoc2md --template README.hbs --files './src/adloader/**/*.js' > README.md",
+    "doc:md": "cat README.tpl.md > README.md && jsdoc2md --template README.hbs --files './src/adloader/**/*.js' >> README.md",
     "prewatch": "run-s clean",
     "watch": "run-p doc watch:* browsersync",
     "watch:js": "rollup --watch -c rollup.config.dev.js",
@@ -47,7 +47,8 @@
   },
   "dependencies": {
     "element-ready-es5": "^2.1.0",
-    "rambda": "^1.0.9"
+    "rambda": "^1.0.9",
+    "scrollmonitor": "^1.2.4"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.38",

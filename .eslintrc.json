@@ -23,6 +23,7 @@
     }
   },
   "rules": {
+    "no-nested-ternary": "off",
     "no-console": "off",
     "no-use-before-define": "off",
     "no-underscore-dangle": "off",

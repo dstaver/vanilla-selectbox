@@ -7,6 +7,7 @@ import { isReady } from './ready';
 import { options } from './options';
 import { dispatch, subscribe } from './events';
 import * as v from './validators';
+import { adloader } from './index';
 
 /**
  * Ads are created as instances of this class
@@ -35,6 +36,7 @@ export class Ad {
     this.element = false;
     this.slot = false;
     this.ready = false;
+    this.isDisplaying = false;
     this.hasBeenDisplayed = false;
 
     this.readyConditions = {
@@ -55,46 +57,61 @@ export class Ad {
    * @memberof Ad
    */
   display() {
-    this.log('Try to display');
+    this.log('display: Try to display');
     const ad = this;
-    return new Promise((resolve, reject) => {
+    return new Promise(resolve => {
+      if (ad.isDisplaying) {
+        resolve('display: Display has already started');
+      }
+      if (ad.hasBeenDisplayed) {
+        resolve('display: Ad has already been displayed');
+      }
       if (isReady() && ad.ready && !ad.hasBeenDisplayed) {
-        ad.hasBeenDisplayed = true;
-        ad.log('Display');
+        ad.log('display: Start');
         const { googletag } = window;
         googletag.cmd.push(() => {
           if (!ad.slot) {
-            ad.log('googletag.defineSlot() start');
+            ad.log('display: googletag.defineSlot() start');
             ad.slot = googletag
               .defineSlot(ad.adUnit, ad.size, ad.id)
               .addService(googletag.pubads());
-            ad.log('googletag.defineSlot() done');
-            ad.log(ad.slot);
+            ad.log('display: googletag.defineSlot() done');
           }
           if (ad.slot) {
             if (ad.targeting) {
-              ad.log('googletag.setTargeting() Start');
+              ad.log('display: googletag.setTargeting() Start');
               Object.keys(ad.targeting).forEach(key => {
                 const value = ad.targeting[key];
                 if (value && (v.isString(value) || v.isNotEmptyArray(value))) {
                   ad.log(
-                    `googletag.setTargeting() setting key *${key}* to ${value}`
+                    `display: googletag.setTargeting() setting key *${key}* to ${value}`
                   );
                   ad.slot.setTargeting(key, value);
                 }
               });
-              ad.log('googletag.setTargeting() done');
+              ad.log('display: googletag.setTargeting() done');
             }
-            ad.log('GPT: Refresh done');
+            ad.log('display: gpt refresh start');
             googletag.pubads().refresh([ad.slot], {
               changeCorrelator: false,
             });
-            ad.log('GPT: Refresh done');
+            ad.log('display: gpt refresh done');
+
+            // Unsubscribe from global ready even once displayed
+            ad.readyUnsubscribe();
+            ad.isDisplaying = false;
+            ad.hasBeenDisplayed = true;
           }
         });
       } else {
-        const err = new Error('Adloader or Ad is not ready');
-        reject(err);
+        const msg = !isReady()
+          ? "Can't display ad because adloader is not ready"
+          : !ad.ready
+            ? "Can't display ad because ad is not ready"
+            : ad.hasBeenDisplayed
+              ? "Can't display ad because ad has already been displayed"
+              : "Can't display ad because adloader or ad is not ready";
+        resolve(`display: ${msg}`);
       }
     });
   }
@@ -156,6 +173,6 @@ export class Ad {
    */
   registerPlugin(plugin) {
     this.log('register plugin');
-    plugin(this);
+    plugin(this, adloader);
   }
 }
