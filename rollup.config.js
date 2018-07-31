@@ -1,7 +1,7 @@
 import babel from 'rollup-plugin-babel';
 import commonjs from 'rollup-plugin-commonjs';
 import resolve from 'rollup-plugin-node-resolve';
-import uglify from 'rollup-plugin-uglify';
+import { uglify } from 'rollup-plugin-uglify';
 import filesize from 'rollup-plugin-filesize';
 import pkg from './package.json';
 
@@ -25,7 +25,7 @@ export default [
     input,
     plugins: [resolve(), commonjs(), babel(babelConfig), filesize()],
     output: {
-      name: 'v-select',
+      name: 'vselect',
       file: pkg.browser,
       format: 'umd',
     },
@@ -34,7 +34,7 @@ export default [
     input,
     plugins: [uglify(), resolve(), commonjs(), babel(babelConfig), filesize()],
     output: {
-      name: 'v-select',
+      name: 'vselect',
       file: pkg.browser.replace('.js', '.min.js'),
       format: 'iife',
     },
@@ -44,12 +44,12 @@ export default [
     plugins: [resolve(), commonjs(), filesize()],
     output: [
       {
-        name: 'v-select',
+        name: 'vselect',
         file: pkg.main,
         format: 'cjs',
       },
       {
-        name: 'v-select',
+        name: 'vselect',
         file: pkg.module,
         format: 'es',
       },
