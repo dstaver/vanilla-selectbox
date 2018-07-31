@@ -1,4 +1,4 @@
-# lib-adloader
+# vanilla-selectbox
 
 Helper library for [GPT (Google Publisher Tags)](https://developers.google.com/doubleclick-gpt/reference) used to configure and load ads from [DFP (Doubleclick For Publishers)](https://support.google.com/dfp_premium).
 
@@ -7,49 +7,19 @@ It can be used to configure ad with a single command, but is also designed to be
 ## Installation
 
 ```bash
-npm install @startsiden/lib-adloader
+npm install vanilla-selectbox
 ```
 
 or
 
 ```bash
-yarn add @startsiden/lib-adloader
+yarn add vanilla-selectbox
 ```
 
 ## Usage
 
 ```javascript
-import { adloader } from 'adloader';
-
-const config = {
-  adUnit: '/36021320/abcnyheter.no',
-  lazyload: true,
-  lazyloadOffset: 100,
-  targeting: {
-    page: 'front',
-    test: true
-  },
-  ads: [
-    {
-      id: 'ad_banner_top',
-      sizes: [
-        [1000, 300],
-        [980, 300],
-        [980, 200],
-        [980, 150],
-        [980, 120],
-        [970, 250],
-        [970, 90],
-        [2, 3]
-      ],
-      targeting: {
-        position: 'banner_top'
-      }
-    }
-  ]
-};
-
-adloader.init(config);
+import vselect from 'vanilla-selectbox';
 ```
 
 ## Development

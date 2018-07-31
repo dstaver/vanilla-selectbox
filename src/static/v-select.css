@@ -1,0 +1,122 @@
+html {
+  font-size: 10px;
+}
+
+body {
+  font-size: 1.4rem;
+  font-family: sans-serif;
+  padding: 20px;
+  background-color: #dadada;
+}
+
+html {
+  font-size: 10px;
+  font-family: sans-serif;
+}
+
+body {
+  padding: 20px;
+  font-size: 1.4rem;
+  color: #5b5b5b;
+  background-color: #eee;
+}
+
+.vselect {
+  position: relative;
+  outline: none;
+}
+
+.vselect:focus .vselect__value,
+.vselect:hover .vselect__value {
+  border-color: #71a0e0;
+  outline: none;
+}
+
+.vselect__value {
+  background-color: #fff;
+  border-radius: 5px;
+  border: 1px solid #c1c5ca;
+  display: block;
+  font-size: 1.2rem;
+  line-height: 3rem;
+  outline: none;
+  padding: 0 1rem;
+  position: relative;
+  transition: border 300ms;
+}
+
+.vselect__value::after {
+  content: "▾";
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding-right: 1rem;
+  font-size: 2rem;
+}
+
+.vselect__value::before,
+.vselect__options__option::before {
+  display: inline-block;
+  content: '●';
+  line-height: 2rem;
+  font-size: 2rem;
+  margin-right: 0.25rem;
+  vertical-align: middle;
+}
+
+.vselect [data-value="ok"]::before {
+  color: #b8e190;
+}
+
+.vselect [data-value="processing"]::before {
+  color: #5b90dc;
+}
+
+.vselect [data-value="warning"]::before {
+  color: #eaa844;
+}
+
+.vselect [data-value="error"]::before {
+  color: #ee7875;
+}
+
+.vselect[data-open="true"] .vselect__options {
+  transform: scaley(1);
+  opacity: 1;
+}
+
+.vselect[data-open="false"] .vselect__options {
+  transform: scaley(0);
+  opacity: 0;
+}
+
+.vselect__options {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: block;
+  border-radius: 5px;
+  border: 1px solid #c1c5ca;
+  outline: none;
+  background-color: #fff;
+  transition: opacity 300ms, transform 300ms;
+  transform-origin: top left;
+}
+
+.vselect__options__option {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  padding: 0 1rem;
+  line-height: 3rem;
+}
+
+.vselect__options__option[data-highlight] {
+  background-color: #f6f6f6;
+}
+
+.vselect__options__option[data-selected],
+.vselect__options__option:hover  {
+  background-color: #f3f3f3;
+}

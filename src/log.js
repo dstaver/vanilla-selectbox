@@ -1,5 +1,4 @@
 /** @module log */
-import path from 'rambda/lib/path';
 
 const colorSupport = useColors();
 const prefixes = [];
@@ -10,7 +9,7 @@ const loggers = {};
  * @returns {function} Colorized log function that prefixes all statements
  */
 export function createLogger(prefix) {
-  const debug = window && path('localStorage.debug', window);
+  const debug = window && window.localStorage && window.localStorage.debug;
   if (loggers[prefix]) {
     return loggers[prefix];
   }
@@ -63,7 +62,7 @@ function selectColor(prefix) {
   const h = (index * increment + alt) % 255;
 
   // Alternate between full and half saturation on every cycle through the hue spectrum
-  const s = Math.floor(index * increment / 255) % 2 ? 50 : 100;
+  const s = Math.floor((index * increment) / 255) % 2 ? 50 : 100;
   return [h, s, 40];
 }
 /**

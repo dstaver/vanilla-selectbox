@@ -3,7 +3,7 @@
     "allowUnknownTags": false
   },
   "source": {
-    "include": ["./README.tpl.md","./src/adloader"],
+    "include": ["./README.tpl.md","./src/v-select"],
     "includePattern": ".js$",
     "excludePattern": "(node_modules/|docs)"
   },

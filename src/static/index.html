@@ -4,23 +4,20 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Adloader</title>
+  <title>Vanilla Selectbox</title>
   <script src="index.js" async></script>
-  <link rel="stylesheet" href="adloader.css">
+  <link rel="stylesheet" href="v-select.css">
 </head>
 <body>
-  <div class="ad ad--banner-top">
-    <div id="banner_top"></div>
-  </div>
-  <div class="page">
-    <div class="ad ad--skyscraper-right">
-      <div id="skyscraper_right"></div>
-    </div>
-    <div class="ad ad--banner-middle">
-      <div id="banner_middle"></div>
-    </div>
-    <h1>Adloader test page</h1>
-    <p><a href="/docs">API Documentation</a></p>
-  </div>
+  <h1>Vanilla selectbox test page</h1>
+  <form>
+    <select name="selectbox1" data-vselect>
+      <option value="ok">Option 1</option>
+      <option value="processing" selected>Option 2</option>
+      <option value="warning">Option 3</option>
+      <option value="error">Option 4</option>
+    </select>
+  </form>
+  <p><a href="/docs">API Documentation</a></p>
 </body>
 </html>
