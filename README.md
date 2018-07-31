@@ -1,8 +1,6 @@
 # vanilla-selectbox
 
-Helper library for [GPT (Google Publisher Tags)](https://developers.google.com/doubleclick-gpt/reference) used to configure and load ads from [DFP (Doubleclick For Publishers)](https://support.google.com/dfp_premium).
-
-It can be used to configure ad with a single command, but is also designed to be modular. Components and functions can be imported individually to help with various aspects of ad configuration and loading.
+Converts regular select elements to a stylable selectbox component
 
 ## Installation
 
